@@ -37,7 +37,7 @@ node ("dockerslave") {
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
         docker.withRegistry('https://dtr.andreas.dtcntr.net', 'DTRUserPassword') {
-            app.push("${env.2.BUILD_NUMBER}")
+            app.push("2.${env.BUILD_NUMBER}")
             app.push("latest")
         }
     }
