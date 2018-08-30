@@ -1,5 +1,5 @@
 # Use Alpine as base
-FROM alpine:latest
+FROM ubuntu:latest
 
 # LABEL Maintainer
 LABEL maintainer="andreas@docker.com andreas.lambrecht@docker.com"
@@ -29,3 +29,14 @@ HEALTHCHECK CMD curl --fail http://localhost:5000 || exit 1
 
 # Run the application
 CMD ["python", "/usr/src/app/app.py"]
+
+# Scan the image with Aqua Micro Scanner
+# ADD https://get.aquasec.com/microscanner .
+# RUN chmod +x microscanner
+# RUN ./microscanner NWViNGYyZjJiOWFj --html > amc-output.html
+
+# RUN apk add --update wget && apk add --no-cache ca-certificates && update-ca-certificates && \
+#     wget -O /microscanner https://get.aquasec.com/microscanner && \
+#     chmod +x /microscanner && \
+#     /microscanner NWViNGYyZjJiOWFj --html > amc-output.html && \
+#     rm -rf /microscanner
