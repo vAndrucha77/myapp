@@ -1,5 +1,5 @@
 # Use Alpine as base
-FROM ubuntu:latest
+FROM alpine:latest
 #FROM mongo:3.2.1
 
 # LABEL Maintainer
