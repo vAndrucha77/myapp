@@ -1,6 +1,6 @@
 version: '3.3'
 services:
-    my-funny-app:
+    my-test-app:
         image: dtr.andreas.dtcntr.net/docker-cemea/my-test-app:latest
         deploy:
             mode: replicated
