@@ -1,5 +1,5 @@
 # Use Alpine as base
-FROM ubuntu:16.04
+FROM mongo:3.2.1
 
 # LABEL Maintainer
 LABEL maintainer="andreas@docker.com andreas.lambrecht@docker.com"
@@ -31,10 +31,10 @@ LABEL maintainer="andreas@docker.com andreas.lambrecht@docker.com"
 # CMD ["python", "/usr/src/app/app.py"]
 
 # Scan the image with Aqua Micro Scanner
-RUN apt-get update && apt-get -y install ca-certificates
+# RUN apt-get update && apt-get -y install ca-certificates
 # ADD https://get.aquasec.com/microscanner .
 # RUN chmod +x microscanner
-# RUN ./microscanner NWViNGYyZjJiOWFj --html > amc-output.html
+# RUN ./microscanner NWViNGYyZjJiOWFj --html > amc-output.html && rm -rf /microscanner
 
 # RUN apk add --update wget && apk add --no-cache ca-certificates && update-ca-certificates && \
 #     wget -O /microscanner https://get.aquasec.com/microscanner && \
