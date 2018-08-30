@@ -25,7 +25,7 @@ node ("dockerslave") {
         /* Ideally, we would run a test framework against our image.
          * Just an example */
 
-        app.inside {
+        docker.image("dtr.andreas.dtcntr.net/docker-cemea/my-test-app").inside {
             sh 'curl --fail http://localhost:5000 || exit 1'
         }
     }
