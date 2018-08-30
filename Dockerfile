@@ -1,5 +1,5 @@
 # Use Alpine as base
-FROM ubuntu:latest
+FROM ubuntu:16.04
 
 # LABEL Maintainer
 LABEL maintainer="andreas@docker.com andreas.lambrecht@docker.com"
