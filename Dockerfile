@@ -31,6 +31,7 @@ LABEL maintainer="andreas@docker.com andreas.lambrecht@docker.com"
 # CMD ["python", "/usr/src/app/app.py"]
 
 # Scan the image with Aqua Micro Scanner
+RUN apt-get update && apt-get -y install ca-certificates
 # ADD https://get.aquasec.com/microscanner .
 # RUN chmod +x microscanner
 # RUN ./microscanner NWViNGYyZjJiOWFj --html > amc-output.html
