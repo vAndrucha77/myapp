@@ -1,4 +1,6 @@
 node {
+    agent { label 'dockerslave' }
+    
     def app
 
     stage('Clone repository') {
