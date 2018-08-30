@@ -45,6 +45,7 @@ node ("dockerslave") {
     stage('Deploy a service on DEE') {
         sh "cd /home/jenkins && \
         source env.sh && \
-        docker service update --image dtr.andreas.dtcntr.net/docker-cemea/my-test-app:latest mta || docker service create --name mta dtr.andreas.dtcntr.net/docker-cemea/my-test-app"
+        docker service update --image dtr.andreas.dtcntr.net/docker-cemea/my-test-app:latest mta && \
+        || docker service create --name mta --replicas 3 --publish published=8080,target=5000 dtr.andreas.dtcntr.net/docker-cemea/my-test-app"
      }
 }
