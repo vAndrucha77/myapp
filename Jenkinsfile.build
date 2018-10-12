@@ -1,0 +1,86 @@
+def pomObject
+def podLabel = "worker-${UUID.randomUUID().toString()}"
+
+pipeline {
+    agent any
+    environment {
+        APP_NAME = "${env.JOB_NAME}"
+        BUILD_DATE = sh (returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%SZ'").trim()
+        MAVEN_OPTIONS = '-DskipTests=true'
+        REGISTRY_URL = "https://${DTR_REGISTRY}"
+        SHORTREV = ''
+        TAG = ''
+        VERSION = ''
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    SHORTREV = sh (returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                }
+                sh 'ls -ltra'
+                println "SHORTREV: ${SHORTREV}"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir( 'simple-java-maven-app' ) {
+                    sh 'env'
+                    script {
+                        def pom = readMavenPom file: 'pom.xml'
+                        // Now you have access to raw version string in pom.version
+                        // Based on your versioning scheme, automatically calculate the next one
+                        VERSION = pom.version.replaceAll('SNAPSHOT', "${SHORTREV}-${env.BUILD_NUMBER}").trim()
+                        TAG = VERSION
+                    }
+                    println "VERSION: ${VERSION}"
+                    println "TAG: ${TAG}"
+
+                    // We never build a SNAPSHOT
+                    // We explicitly set versions.
+                    sh """
+                        mvn -B org.codehaus.mojo:versions-maven-plugin:2.5:set -DprocessAllModules -DnewVersion=${VERSION}  $MAVEN_OPTIONS
+                        mvn -B clean install $MAVEN_OPTIONS
+                        pwd && ls -ltra && ls -ltra ./target
+                    """
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir( 'simple-java-maven-app/jenkins') {
+                    sh 'env'
+                    sh 'pwd && ls -ltra && ls -ltra ../target'
+                    sh """
+                        cp -p ../target/my-app-${VERSION}.jar ${APP_NAME}-${VERSION}.jar
+                        sudo docker build --no-cache=true --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${SHORTREV} --build-arg BUILD_VERSION=${VERSION} --build-arg JAR_FILE=${APP_NAME}-${VERSION}.jar -t ${APP_NAME}:${TAG} .
+                    """
+                }
+            }
+        }
+
+        stage('Test Docker Image') {
+            steps {
+                sh """
+                    sudo docker run ${APP_NAME}:${TAG}
+                """
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'jenkins', passwordVariable: 'REGISTRY_PASS', usernameVariable: 'REGISTRY_USER')]) {
+                    sh """
+                        sudo docker login -u ${REGISTRY_USER} -p ${REGISTRY_PASS} ${REGISTRY_URL}
+                        sudo docker image tag ${APP_NAME}:${TAG} ${DTR_REGISTRY}/jenkins/${APP_NAME}:${TAG}
+                        sudo docker image push ${DTR_REGISTRY}/${REGISTRY_USER}/${APP_NAME}:${TAG}
+                        sudo docker image rm ${DTR_REGISTRY}/${REGISTRY_USER}/${APP_NAME}:${TAG}
+                    """
+                }
+            }
+        }
+    }
+}

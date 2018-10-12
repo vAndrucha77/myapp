@@ -1,7 +1,7 @@
 version: '3.3'
 services:
-    my-test-app:
-        image: dtr.andreas.dtcntr.net/docker-cemea/my-test-app:latest
+    myapp:
+        image: dtr.andreas.dtcntr.net/docker-cemea/myapp:latest
         deploy:
             mode: replicated
             replicas: 3
@@ -17,7 +17,7 @@ services:
               max_attempts: 1
               window: 0s
             labels:
-                com.docker.lb.hosts: my-test-app.swarm.andreas.dtcntr.net
+                com.docker.lb.hosts: myapp.swarm.andreas.dtcntr.net
                 com.docker.lb.port: 5000
                 # com.docker.ucp.access.label: /Development
         healthcheck:
@@ -25,8 +25,8 @@ services:
           timeout: 1s
           retries: 3
         networks:
-            - my-test-app
+            - myapp
 
 networks:
-    my-test-app:
+    myapp:
         driver: overlay
