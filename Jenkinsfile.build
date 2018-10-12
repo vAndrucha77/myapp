@@ -25,9 +25,7 @@ pipeline {
             steps {
                     sh 'env'
                     sh 'pwd && ls -ltra'
-                    sh """
-                        sudo docker build --no-cache=true --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${SHORTREV} --build-arg BUILD_VERSION=${VERSION} -t ${APP_NAME}:${TAG} .
-                    """
+                    sh 'sudo docker build --no-cache=true --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${SHORTREV} --build-arg BUILD_VERSION=${VERSION} -t ${APP_NAME}:${TAG} .'
                 }
             }
         
