@@ -51,10 +51,10 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'ci-pipeline', passwordVariable: 'REGISTRY_PASS', usernameVariable: 'REGISTRY_USER')]) {
                     sh """
-                        sudo docker login -u ${REGISTRY_USER} -p ${REGISTRY_PASS} ${REGISTRY_URL}
-                        sudo docker image tag ${APP_NAME}:${TAG} ${DTR_REGISTRY}/docker-cemea/${APP_NAME}:${TAG}
-                        sudo docker image push ${DTR_REGISTRY}/${REGISTRY_USER}/${APP_NAME}:${TAG}
-                        sudo docker image rm ${DTR_REGISTRY}/${REGISTRY_USER}/${APP_NAME}:${TAG}
+                        docker login -u ${REGISTRY_USER} -p ${REGISTRY_PASS} ${REGISTRY_URL}
+                        docker image tag ${APP_NAME}:${TAG} ${DTR_REGISTRY}/docker-cemea/${APP_NAME}:${TAG}
+                        docker image push ${DTR_REGISTRY}/${REGISTRY_USER}/${APP_NAME}:${TAG}
+                        docker image rm ${DTR_REGISTRY}/${REGISTRY_USER}/${APP_NAME}:${TAG}
                     """
                 }
             }
