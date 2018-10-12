@@ -24,11 +24,11 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            println "TAG: ${TAG}"
-            steps {    
-                    sh 'env'
-                    sh 'pwd && ls -ltra'
-                    sh 'docker build --no-cache=true -t ${APP_NAME}:${TAG} .'
+            steps { 
+                println "TAG: ${TAG}"   
+                sh 'env'
+                sh 'pwd && ls -ltra'
+                sh 'docker build --no-cache=true -t ${APP_NAME}:${TAG} .'
                 }
             }
         
