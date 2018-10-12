@@ -24,6 +24,7 @@ pipeline {
         }
 
         stage('Build Docker Image') {
+            println "TAG: ${TAG}"
             steps {    
                     sh 'env'
                     sh 'pwd && ls -ltra'
