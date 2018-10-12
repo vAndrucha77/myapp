@@ -53,7 +53,7 @@ pipeline {
                     Source Image Name: ${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}
                     Target Image Name: ${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}-signed
                     Location: ${payload.location}""".stripIndent()
-                currentBuild.displayName = "#${env.BUILD_NUMBER} - Triggered by PROMOTION webhook for ${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}
+                currentBuild.displayName = "#${env.BUILD_NUMBER} - Triggered by PROMOTION webhook for ${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}"
                 currentBuild.description = summaryString
             }
         }
