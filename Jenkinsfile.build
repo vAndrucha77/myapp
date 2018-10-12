@@ -38,9 +38,11 @@ pipeline {
         stage('Test Docker Image') {
             steps {
                 sh """
-                docker run -p 8080:5000 ${APP_NAME}:${TAG}
+                docker run -p 8080:5000 ${APP_NAME}:${TAG} --name ${APP_NAME}
                 """
                 sh 'curl -v http://localhost:8080 && exit 0'
+                sh """
+                docker kill ${APP_NAME}
             }
         }
 
