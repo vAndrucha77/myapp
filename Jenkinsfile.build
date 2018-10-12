@@ -6,7 +6,7 @@ pipeline {
         MAVEN_OPTIONS = '-DskipTests=true'
         REGISTRY_URL = "https://${DTR_REGISTRY}"
         SHORTREV = ''
-        TAG = "$BUILD_DATE"
+        TAG = ''
         
     }
 
@@ -23,6 +23,8 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+                    TAG = SHORTREV
+                    println "TAG: ${TAG}"
                     sh 'env'
                     sh 'pwd && ls -ltra'
                     sh 'docker build --no-cache=true -t ${APP_NAME}:${TAG} .'
