@@ -28,14 +28,18 @@ pipeline {
                 println "TAG: ${TAG}"   
                 sh 'env'
                 sh 'pwd && ls -ltra'
-                sh 'docker build --no-cache=true -t ${APP_NAME}:${TAG} .'
+                sh """
+                docker build --no-cache=true -t ${APP_NAME}:${TAG} .
+                """
                 }
             }
         
 
         stage('Test Docker Image') {
             steps {
-                sh 'docker run -p 8080:5000 ${APP_NAME}:${TAG}'
+                sh """
+                docker run -p 8080:5000 ${APP_NAME}:${TAG}
+                """
                 sh 'curl -v http://localhost:8080'
             }
         }
