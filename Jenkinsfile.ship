@@ -15,7 +15,6 @@ pipeline {
         stage('Pull Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'ci-pipeline', passwordVariable: 'REGISTRY_PASS', usernameVariable: 'REGISTRY_USER')]) {
-                    println "SOURCE: ${SOURCE_NAMESPACE}/${SOURCE_IMAGE}:${SOURCE_TAG}"
                     sh """
                         docker version
                         docker login -u ${REGISTRY_USER} -p ${REGISTRY_PASS} ${REGISTRY_URL}
