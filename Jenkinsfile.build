@@ -6,7 +6,7 @@ pipeline {
         MAVEN_OPTIONS = '-DskipTests=true'
         REGISTRY_URL = "https://${DTR_REGISTRY}"
         SHORTREV = ''
-        TAG = BUILD_DATE
+        TAG = "BUILD_DATE"
         
     }
 
