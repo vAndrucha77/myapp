@@ -1,8 +1,5 @@
-node ("dockerslave")
-
-def app
-
 pipeline {
+        agent dockerslave    
         environment {
         APP_NAME = "${env.JOB_NAME}"
         BUILD_DATE = sh (returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%SZ'").trim()
