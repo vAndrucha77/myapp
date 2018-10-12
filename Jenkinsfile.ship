@@ -1,3 +1,6 @@
+import groovy.json.JsonSlurperClassic
+def payload = new groovy.json.JsonSlurperClassic().parseText(requestPayload)
+
 pipeline {
     agent { node { label 'dockerslave' } }  
     environment {
@@ -41,5 +44,17 @@ pipeline {
             }
         }
     }
-  
+        post {
+                always {
+                    script {
+                        def summaryString = """\
+                        Promotion Summary:
+                            Source Image Name: ${SOURCE_IMAGE}:${SOURCE_TAG}
+                            Target Image Name: ${TARGET_IMAGE}:${TARGET_TAG}
+                            Location: ${payload.location}""".stripIndent()
+                        currentBuild.displayName = "#${env.BUILD_NUMBER} - Triggered by PROMOTION webhook for ${SOURCE_IMAGE}:${SOURCE_TAG}"
+                        currentBuild.description = summaryString
+                    }
+                }
+            }
 }
