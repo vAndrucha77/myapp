@@ -6,22 +6,20 @@ pipeline {
     environment {
         DOCKER_OPTS = "--config /var/jenkins_config/.docker"
         REGISTRY_URL = "https://${DTR_REGISTRY}"
-        SOURCE_IMAGE = "${payload.contents.sourceRepository}"
-        SOURCE_TAG = "${payload.contents.sourceTag}"
-        TARGET_IMAGE = "${payload.contents.targetRepository}"
-        TARGET_TAG = "${payload.contents.targetTag}"
-    }
+        SOURCE_NAMESPACE = "${payload.contents.namespace}"
+        SOURCE_IMAGE = "${payload.contents.repository}"
+        SOURCE_TAG = "${payload.contents.tag}"
+        }
 
     stages {
         stage('Pull Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'ci-pipeline', passwordVariable: 'REGISTRY_PASS', usernameVariable: 'REGISTRY_USER')]) {
-                    println "SOURCE: ${SOURCE_IMAGE}:${SOURCE_TAG}"
-                    println "TARGET: ${TARGET_IMAGE}:${TARGET_TAG}"
+                    println "SOURCE: ${SOURCE_NAMESPACE}:${SOURCE_IMAGE}:${SOURCE_TAG}"
                     sh """
                         docker version
                         docker login -u ${REGISTRY_USER} -p ${REGISTRY_PASS} ${REGISTRY_URL}
-                        docker image pull ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}
+                        docker image pull ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}
                     """
                 }
             }
@@ -37,9 +35,9 @@ pipeline {
                         "DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE=$ROOT_SIGNING_PASSPHRASE",
                         "DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=$REPOSITORY_SIGNING_PASSPHRASE"]) {
                         sh """
-                            docker image tag ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG} ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
-                            docker image push ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
-                            docker trust inspect --pretty ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
+                            docker image tag ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${SOURCE_IMAGE}:${SOURCE_TAG} ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}-signed
+                            docker image push ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}-signed
+                            docker trust inspect --pretty ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}-signed
                         """
                     }
                 }
@@ -52,10 +50,10 @@ pipeline {
             script {
                 def summaryString = """\
                 Promotion Summary:
-                    Source Image Name: ${SOURCE_IMAGE}:${SOURCE_TAG}
-                    Target Image Name: ${TARGET_IMAGE}:${TARGET_TAG}
+                    Source Image Name: ${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}
+                    Target Image Name: ${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}-signed
                     Location: ${payload.location}""".stripIndent()
-                currentBuild.displayName = "#${env.BUILD_NUMBER} - Triggered by PROMOTION webhook for ${SOURCE_IMAGE}:${SOURCE_TAG}"
+                currentBuild.displayName = "#${env.BUILD_NUMBER} - Triggered by PROMOTION webhook for ${SOURCE_NAMESPACE}/${TARGET_IMAGE}:${TARGET_TAG}
                 currentBuild.description = summaryString
             }
         }
