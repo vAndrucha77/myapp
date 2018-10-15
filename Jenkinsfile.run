@@ -10,6 +10,7 @@ pipeline {
                     TAG = SHORTREV
                 }
                 sh 'ls -ltra'
+                sh 'pwd'
                 println "SHORTREV: ${SHORTREV}"
                 println "TAG: ${TAG}"
             }
