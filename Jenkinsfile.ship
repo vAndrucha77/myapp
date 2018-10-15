@@ -2,9 +2,9 @@ import groovy.json.JsonSlurperClassic
 def payload = new groovy.json.JsonSlurperClassic().parseText(requestPayload)
 
 pipeline {
-    agent { node { label 'dockerslave' } }
+    agent { node { label 'JenkinsSlave' } }
     environment {
-        NOTARY_OPTS = "-d /home/jenkins/.docker/trust -s https://${DTR_URL} --tlscacert /home/jenkins/.docker/tls/${DTR_URL}/ca.crt"
+        NOTARY_OPTS = "-d /root/.docker/trust -s https://${DTR_URL} --tlscacert /root/.docker/tls/${DTR_URL}/ca.crt"
         REGISTRY_URL = "https://${DTR_REGISTRY}"
         SOURCE_IMAGE = "${payload.contents.sourceRepository}"
         SOURCE_TAG = "${payload.contents.sourceTag}"
@@ -43,7 +43,7 @@ pipeline {
                         "NOTARY_SNAPSHOT_PASSPHRASE=$DELEGATION_PASSPHRASE",
                         "NOTARY_DELEGATION_PASSPHRASE=$DELEGATION_PASSPHRASE"]) {
                         sh """
-                            notary ${NOTARY_OPTS} key import /home/jenkins/key.pem
+                            notary ${NOTARY_OPTS} key import /root/key.pem
                             docker image tag ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG} ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
                             docker image push ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
                         """
