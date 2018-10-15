@@ -4,7 +4,7 @@ def payload = new groovy.json.JsonSlurperClassic().parseText(requestPayload)
 pipeline {
     agent { node { label 'dockerslave' } }
     environment {
-        DOCKER_OPTS = "--config /var/jenkins_config/.docker"
+        NOTARY_OPTS = "-d /home/jenkins/.docker/trust -s https://${DTR_URL} --tlscacert /home/jenkins/.docker/tls/${DTR_URL}/ca.crt"
         REGISTRY_URL = "https://${DTR_REGISTRY}"
         SOURCE_IMAGE = "${payload.contents.sourceRepository}"
         SOURCE_TAG = "${payload.contents.sourceTag}"
@@ -27,6 +27,31 @@ pipeline {
             }
         }
     }
+
+        stage('Sign Image') {
+            steps {
+                withCredentials([[$class: 'StringBinding', credentialsId: 'dct_root_passphrase', variable: 'ROOT_SIGNING_PASSPHRASE'],
+                    [$class: 'StringBinding', credentialsId: 'dct_repo_passphrase', variable: 'REPOSITORY_SIGNING_PASSPHRASE'],
+                    [$class: 'StringBinding', credentialsId: 'dct_delegation_passphrase', variable: 'DELEGATION_PASSPHRASE'],
+                    [$class: 'UsernamePasswordMultiBinding', credentialsId: 'ci-pipeline', usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASS']]) {
+
+                    withEnv(["DOCKER_CONTENT_TRUST=1",
+                        "DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE=$ROOT_SIGNING_PASSPHRASE",
+                        "DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=$REPOSITORY_SIGNING_PASSPHRASE",
+                        "NOTARY_ROOT_PASSPHRASE=$DELEGATION_PASSPHRASE",
+                        "NOTARY_TARGETS_PASSPHRASE=$DELEGATION_PASSPHRASE",
+                        "NOTARY_SNAPSHOT_PASSPHRASE=$DELEGATION_PASSPHRASE",
+                        "NOTARY_DELEGATION_PASSPHRASE=$DELEGATION_PASSPHRASE",]) {
+                        sh """
+                            notary ${NOTARY_OPTS} key import /home/jenkins/key.pem
+                            docker image tag ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG} ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
+                            docker image push ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
+                            docker trust inspect --pretty ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
+                        """
+                    }
+                }
+            }
+        }
 
     post {
         always {
