@@ -8,7 +8,7 @@ pipeline {
                 sh """
                 cd /home/jenkins && \
                 source env.sh && \
-                docker stack deploy --compose-file myapp-interlock-$d.yml ma && \
+                docker stack deploy --compose-file myapp-interlock.yml ma && \
                 docker service ls && \
                 docker stack ps ma
                 """
