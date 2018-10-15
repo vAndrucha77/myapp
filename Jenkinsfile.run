@@ -19,6 +19,8 @@ pipeline {
             steps {
                 sh """
                 cd /home/jenkins && \
+                pwd && \
+                ls -ltra && \
                 source env.sh && \
                 docker stack deploy --compose-file /home/jenkins/myapp-interlock.yml ma && \
                 docker service ls && \
