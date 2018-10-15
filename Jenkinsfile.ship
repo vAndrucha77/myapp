@@ -6,6 +6,10 @@ pipeline {
     environment {
         DOCKER_OPTS = "--config /var/jenkins_config/.docker"
         REGISTRY_URL = "https://${DTR_REGISTRY}"
+        SOURCE_IMAGE = "${payload.contents.sourceRepository}"
+        SOURCE_TAG = "${payload.contents.sourceTag}"
+        TARGET_IMAGE = "${payload.contents.targetRepository}"
+        TARGET_TAG = "${payload.contents.targetTag}"
         SOURCE_NAMESPACE = "${payload.contents.namespace}"
         SOURCE_IMAGE = "${payload.contents.repository}"
         SOURCE_TAG = "${payload.contents.tag}"
@@ -18,9 +22,9 @@ pipeline {
                     sh """
                         docker version
                         docker login -u ${REGISTRY_USER} -p ${REGISTRY_PASS} ${REGISTRY_URL}
-                        docker image pull ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${SOURCE_IMAGE}:${SOURCE_TAG}
-                        docker image tag ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${SOURCE_IMAGE}:${SOURCE_TAG} ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${SOURCE_IMAGE}:${SOURCE_TAG}-signed
-                        docker image push ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${SOURCE_IMAGE}:${SOURCE_TAG}-signed
+                        docker image pull ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}
+                        docker image tag ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG} ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
+                        docker image push ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
                     """
                 }
             }
@@ -32,10 +36,10 @@ pipeline {
             script {
                 def summaryString = """\
                 Promotion Summary:
-                    Source Image Name: ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${SOURCE_IMAGE}:${SOURCE_TAG}
-                    Target Image Name: ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${SOURCE_IMAGE}:${SOURCE_TAG}-signed
+                    Source Image Name: ${SOURCE_IMAGE}:${SOURCE_TAG}
+                    Target Image Name: ${TARGET_IMAGE}:${TARGET_TAG}
                     Location: ${payload.location}""".stripIndent()
-                currentBuild.displayName = "#${env.BUILD_NUMBER} - Triggered by PROMOTION webhook for ${DTR_REGISTRY}/${SOURCE_NAMESPACE}/${SOURCE_IMAGE}:${SOURCE_TAG}"
+                currentBuild.displayName = "#${env.BUILD_NUMBER} - Triggered by PROMOTION webhook for ${SOURCE_IMAGE}:${SOURCE_TAG}"
                 currentBuild.description = summaryString
             }
         }
