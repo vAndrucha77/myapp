@@ -1,7 +1,7 @@
 version: '3.3'
 services:
     myapp:
-        image: dtr.andreas.dtcntr.net/docker-cemea/ship-myapp:latest
+        image: dtr.andreas.dtcntr.net/docker-cemea/run-myapp:latest
         deploy:
             mode: replicated
             replicas: 3
