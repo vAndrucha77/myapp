@@ -17,4 +17,14 @@ pipeline {
                 }
             }
     }
+
+    post {
+        always {
+            script {
+                def summaryString = """\
+                currentBuild.displayName = "#${env.BUILD_NUMBER} - Triggered by PROMOTION webhook for Docker Stack Deploy"
+                currentBuild.description = summaryString
+            }
+        }
+    }
 }
