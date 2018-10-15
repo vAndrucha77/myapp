@@ -20,8 +20,6 @@ pipeline {
                         docker version
                         docker login -u ${REGISTRY_USER} -p ${REGISTRY_PASS} ${REGISTRY_URL}
                         docker image pull ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}
-                        docker image tag ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG} ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
-                        docker image push ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
                     """
                 }
             }
