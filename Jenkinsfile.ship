@@ -28,7 +28,7 @@ pipeline {
         }
     }
 
-        stage('Sign Image') {
+    stage('Sign Image') {
             steps {
                 withCredentials([[$class: 'StringBinding', credentialsId: 'dct_root_passphrase', variable: 'ROOT_SIGNING_PASSPHRASE'],
                     [$class: 'StringBinding', credentialsId: 'dct_repo_passphrase', variable: 'REPOSITORY_SIGNING_PASSPHRASE'],
@@ -46,7 +46,6 @@ pipeline {
                             notary ${NOTARY_OPTS} key import /home/jenkins/key.pem
                             docker image tag ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG} ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
                             docker image push ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
-                            docker trust inspect --pretty ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
                         """
                     }
                 }
