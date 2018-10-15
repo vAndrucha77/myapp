@@ -1,0 +1,19 @@
+
+pipeline {
+    agent { node { label 'dockerslave' } }
+    
+    stages {
+    
+     stage ('Deploy to Docker Enterprise' {
+         steps {
+             sh """
+                cd /home/jenkins && \
+                source env.sh && \
+                docker stack deploy --compose-file myapp-interlock-$d.yml ma && \
+                docker service ls
+                docker stack ps ma
+                }
+            }
+        }
+    }
+
