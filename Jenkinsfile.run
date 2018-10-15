@@ -11,6 +11,7 @@ pipeline {
                   docker stack deploy --compose-file myapp-interlock-$d.yml ma && \
                   docker service ls
                   docker stack ps ma
+                """
                 }
             }
     }
