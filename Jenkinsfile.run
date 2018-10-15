@@ -4,7 +4,7 @@ pipeline {
     
     stages {
     
-     stage ('Deploy to Docker Enterprise' {
+     stage ('Deploy to Docker Enterprise') {
          steps {
              sh """
                 cd /home/jenkins && \
