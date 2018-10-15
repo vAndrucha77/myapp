@@ -20,7 +20,7 @@ pipeline {
                 sh """
                 cd /home/jenkins && \
                 source env.sh && \
-                docker stack deploy --compose-file myapp-interlock.yml ma && \
+                docker stack deploy --compose-file /home/jenkins/myapp-interlock.yml ma && \
                 docker service ls && \
                 docker stack ps ma
                 """
