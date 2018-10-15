@@ -2,19 +2,6 @@ pipeline {
     agent { node { label 'dockerslave' } }
     
     stages {
-
-        stage('Checkout') {
-            steps {
-                script {
-                    SHORTREV = sh (returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-                    TAG = SHORTREV
-                }
-                sh 'ls -ltra'
-                sh 'pwd'
-                println "SHORTREV: ${SHORTREV}"
-                println "TAG: ${TAG}"
-            }
-        }
     
         stage ('Deploy to Docker Enterprise') {
             steps {
