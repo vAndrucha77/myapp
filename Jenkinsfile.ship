@@ -10,9 +10,6 @@ pipeline {
         SOURCE_TAG = "${payload.contents.sourceTag}"
         TARGET_IMAGE = "${payload.contents.targetRepository}"
         TARGET_TAG = "${payload.contents.targetTag}"
-        SOURCE_NAMESPACE = "${payload.contents.namespace}"
-        SOURCE_IMAGE = "${payload.contents.repository}"
-        SOURCE_TAG = "${payload.contents.tag}"
         }
 
     stages {
