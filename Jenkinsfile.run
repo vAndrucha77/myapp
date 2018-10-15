@@ -22,7 +22,8 @@ pipeline {
         always {
             script {
                 def summaryString = """\
-                Promotion Summary
+                Promotion Summary:
+                Location: ${payload.location}""".stripIndent()
                 currentBuild.displayName = "#${env.BUILD_NUMBER} - Triggered by PROMOTION webhook for Docker Stack Deploy"
                 currentBuild.description = summaryString
             }
