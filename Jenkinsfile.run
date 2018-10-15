@@ -23,7 +23,7 @@ pipeline {
                 pwd && \
                 ls -ltra && \
                 source env.sh && \
-                docker stack deploy --compose-file /home/jenkins/myapp-interlock.yml ma && \
+                docker stack deploy --compose-file /home/jenkins/workspace/run-myapp/myapp-interlock.yml ma && \
                 docker service ls && \
                 docker stack ps ma
                 """
