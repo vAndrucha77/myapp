@@ -41,7 +41,7 @@ pipeline {
                         "NOTARY_ROOT_PASSPHRASE=$DELEGATION_PASSPHRASE",
                         "NOTARY_TARGETS_PASSPHRASE=$DELEGATION_PASSPHRASE",
                         "NOTARY_SNAPSHOT_PASSPHRASE=$DELEGATION_PASSPHRASE",
-                        "NOTARY_DELEGATION_PASSPHRASE=$DELEGATION_PASSPHRASE",]) {
+                        "NOTARY_DELEGATION_PASSPHRASE=$DELEGATION_PASSPHRASE"]) {
                         sh """
                             notary ${NOTARY_OPTS} key import /home/jenkins/key.pem
                             docker image tag ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG} ${DTR_REGISTRY}/${TARGET_IMAGE}:${TARGET_TAG}-signed
